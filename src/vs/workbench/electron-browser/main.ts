@@ -47,7 +47,19 @@ import { ConsoleLogService, MultiplexLogService, ILogService } from 'vs/platform
 import { IssueChannelClient } from 'vs/platform/issue/common/issueIpc';
 import { IIssueService } from 'vs/platform/issue/common/issue';
 import { LogLevelSetterChannelClient, FollowerLogService } from 'vs/platform/log/common/logIpc';
-gracefulFs.gracefulify(fs); // enable gracefulFs
+
+// TODO@snapshot
+let _initialize = () => {
+	gracefulFs.gracefulify(fs); // enable gracefulFs
+};
+
+declare var MonacoSnapshotInitializeCallbacks: any;
+if (typeof MonacoSnapshotInitializeCallbacks !== 'undefined') {
+	MonacoSnapshotInitializeCallbacks.push(_initialize);
+} else {
+	_initialize();
+}
+
 
 export function startup(configuration: IWindowConfiguration): TPromise<void> {
 

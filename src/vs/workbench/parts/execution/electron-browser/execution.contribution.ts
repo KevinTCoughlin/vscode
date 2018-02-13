@@ -17,7 +17,7 @@ import { IWorkbenchEditorService } from 'vs/workbench/services/editor/common/edi
 import { KeyMod, KeyCode } from 'vs/base/common/keyCodes';
 import { Extensions, IConfigurationRegistry } from 'vs/platform/configuration/common/configurationRegistry';
 import { ITerminalService as IIntegratedTerminalService, KEYBINDING_CONTEXT_TERMINAL_NOT_FOCUSED } from 'vs/workbench/parts/terminal/common/terminal';
-import { getDefaultTerminalWindows, DEFAULT_TERMINAL_LINUX_READY, DEFAULT_TERMINAL_OSX, ITerminalConfiguration } from 'vs/workbench/parts/execution/electron-browser/terminal';
+import { getDefaultTerminalWindows, getDefaultTerminalLinuxReady, DEFAULT_TERMINAL_OSX, ITerminalConfiguration } from 'vs/workbench/parts/execution/electron-browser/terminal';
 import { WinTerminalService, MacTerminalService, LinuxTerminalService } from 'vs/workbench/parts/execution/electron-browser/terminalService';
 import { IHistoryService } from 'vs/workbench/services/history/common/history';
 import { ResourceContextKey } from 'vs/workbench/common/resources';
@@ -36,45 +36,54 @@ if (env.isWindows) {
 	registerSingleton(ITerminalService, LinuxTerminalService);
 }
 
-DEFAULT_TERMINAL_LINUX_READY.then(defaultTerminalLinux => {
-	let configurationRegistry = <IConfigurationRegistry>Registry.as(Extensions.Configuration);
-	configurationRegistry.registerConfiguration({
-		'id': 'externalTerminal',
-		'order': 100,
-		'title': nls.localize('terminalConfigurationTitle', "External Terminal"),
-		'type': 'object',
-		'properties': {
-			'terminal.explorerKind': {
-				'type': 'string',
-				'enum': [
-					'integrated',
-					'external'
-				],
-				'description': nls.localize('explorer.openInTerminalKind', "Customizes what kind of terminal to launch."),
-				'default': 'integrated',
-				'isExecutable': false
-			},
-			'terminal.external.windowsExec': {
-				'type': 'string',
-				'description': nls.localize('terminal.external.windowsExec', "Customizes which terminal to run on Windows."),
-				'default': getDefaultTerminalWindows(),
-				'isExecutable': true
-			},
-			'terminal.external.osxExec': {
-				'type': 'string',
-				'description': nls.localize('terminal.external.osxExec', "Customizes which terminal application to run on OS X."),
-				'default': DEFAULT_TERMINAL_OSX,
-				'isExecutable': true
-			},
-			'terminal.external.linuxExec': {
-				'type': 'string',
-				'description': nls.localize('terminal.external.linuxExec', "Customizes which terminal to run on Linux."),
-				'default': defaultTerminalLinux,
-				'isExecutable': true
+let _initialize = () => {
+	getDefaultTerminalLinuxReady().then(defaultTerminalLinux => {
+		let configurationRegistry = <IConfigurationRegistry>Registry.as(Extensions.Configuration);
+		configurationRegistry.registerConfiguration({
+			'id': 'externalTerminal',
+			'order': 100,
+			'title': nls.localize('terminalConfigurationTitle', "External Terminal"),
+			'type': 'object',
+			'properties': {
+				'terminal.explorerKind': {
+					'type': 'string',
+					'enum': [
+						'integrated',
+						'external'
+					],
+					'description': nls.localize('explorer.openInTerminalKind', "Customizes what kind of terminal to launch."),
+					'default': 'integrated',
+					'isExecutable': false
+				},
+				'terminal.external.windowsExec': {
+					'type': 'string',
+					'description': nls.localize('terminal.external.windowsExec', "Customizes which terminal to run on Windows."),
+					'default': getDefaultTerminalWindows(),
+					'isExecutable': true
+				},
+				'terminal.external.osxExec': {
+					'type': 'string',
+					'description': nls.localize('terminal.external.osxExec', "Customizes which terminal application to run on OS X."),
+					'default': DEFAULT_TERMINAL_OSX,
+					'isExecutable': true
+				},
+				'terminal.external.linuxExec': {
+					'type': 'string',
+					'description': nls.localize('terminal.external.linuxExec', "Customizes which terminal to run on Linux."),
+					'default': defaultTerminalLinux,
+					'isExecutable': true
+				}
 			}
-		}
+		});
 	});
-});
+};
+
+declare var MonacoSnapshotInitializeCallbacks: any;
+if (typeof MonacoSnapshotInitializeCallbacks !== 'undefined') {
+	MonacoSnapshotInitializeCallbacks.push(_initialize);
+} else {
+	_initialize();
+}
 
 const OPEN_IN_TERMINAL_COMMAND_ID = 'openInTerminal';
 CommandsRegistry.registerCommand({
