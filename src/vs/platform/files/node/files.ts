@@ -7,4 +7,7 @@
 const WIN32_MAX_FILE_SIZE = 300 * 1024 * 1024; // 300 MB
 const GENERAL_MAX_FILE_SIZE = 16 * 1024 * 1024 * 1024; // 16 GB
 
-export const MAX_FILE_SIZE = process.arch === 'ia32' ? WIN32_MAX_FILE_SIZE : GENERAL_MAX_FILE_SIZE;
+declare var MonacoSnapshotArch: string;
+const arch: string = (typeof MonacoSnapshotArch !== 'undefined' ? MonacoSnapshotArch : process.arch);
+
+export const MAX_FILE_SIZE = (arch === 'ia32' ? WIN32_MAX_FILE_SIZE : GENERAL_MAX_FILE_SIZE);

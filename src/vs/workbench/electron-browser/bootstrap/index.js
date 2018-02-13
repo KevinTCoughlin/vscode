@@ -7,7 +7,7 @@
 
 'use strict';
 
-/*global window,document,define,Monaco_Loader_Init,Monaco_CSS*/
+/*global window,document,define,Monaco_Loader_Init,Monaco_CSS,Monaco_Node_Modules*/
 
 const perf = require('../../../base/common/performance');
 perf.mark('renderer/started');
@@ -207,18 +207,22 @@ function main() {
 	if (typeof Monaco_Loader_Init === 'function') {
 		// There has been a snapshot
 		define = Monaco_Loader_Init().define;
+
+		const originalFS = require.__$__nodeRequire('original-fs');
+		Object.keys(originalFS).forEach((key) => {
+			Monaco_Node_Modules['fs'][key] = originalFS[key];
+		});
 	} else {
 		const loaderFilename = configuration.appRoot + '/out/vs/loader.js';
 		const loaderSource = require('fs').readFileSync(loaderFilename);
 		require('vm').runInThisContext(loaderSource, { filename: loaderFilename });
 		define = global.define;
 		global.define = undefined;
+
+		define('fs', ['original-fs'], function (originalFS) { return originalFS; }); // replace the patched electron fs with the original node fs for all AMD code
 	}
 
 	window.nodeRequire = require.__$__nodeRequire;
-
-	define('fs', ['original-fs'], function (originalFS) { return originalFS; }); // replace the patched electron fs with the original node fs for all AMD code
-
 	window.MonacoEnvironment = {};
 
 	const onNodeCachedData = window.MonacoEnvironment.onNodeCachedData = [];

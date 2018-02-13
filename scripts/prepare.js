@@ -6,6 +6,7 @@
 const fs = require('fs');
 const path = require('path');
 const product = require('../product.json');
+const package = require('../package.json');
 const cp = require('child_process');
 const vm = require('vm');
 
@@ -95,23 +96,22 @@ const CONTENTS = [
 	'vs/base/common/sequence',
 	'vs/base/common/worker/simpleWorker',
 	'vs/base/node/console',
-	// 'vs/base/node/decoder', //string_decoder
-	// 'vs/base/node/flow', // assert
-	// 'vs/base/node/id', // os
-	// 'vs/base/node/paths', // WTF!!!
-	// 'vs/base/node/ports', // net
-	// 'vs/base/node/proxy', // url
-	// 'vs/base/node/stdFork', // child_process
-	// 'vs/base/node/stream',
-	// 'vs/base/node/encoding',
-	// 'vs/base/node/extfs',
-	// 'vs/base/node/config',
-	// 'vs/base/node/mime',
-	// 'vs/base/node/pfs',
+	'vs/base/node/decoder',
+	'vs/base/node/flow',
+	'vs/base/node/id',
+	'vs/base/node/ports',
+	'vs/base/node/proxy',
+	'vs/base/node/stdFork',
+	'vs/base/node/stream',
+	'vs/base/node/encoding',
+	'vs/base/node/extfs',
+	'vs/base/node/config',
+	'vs/base/node/mime',
+	'vs/base/node/pfs',
 	'vs/base/parts/ipc/common/ipc',
 	'vs/base/parts/ipc/common/ipc.electron',
-	// 'vs/base/parts/ipc/electron-browser/ipc.electron-browser',
-	// 'vs/base/parts/ipc/node/ipc.net',
+	'vs/base/parts/ipc/electron-browser/ipc.electron-browser',
+	'vs/base/parts/ipc/node/ipc.net',
 	'vs/base/parts/quickopen/browser/quickOpenViewer',
 	'vs/base/parts/quickopen/common/quickOpen',
 	'vs/base/parts/quickopen/common/quickOpenScorer',
@@ -277,8 +277,8 @@ const CONTENTS = [
 	'vs/base/common/keybindingLabels',
 	'vs/base/browser/ui/keybindingLabel/keybindingLabel',
 	'vs/base/common/severity',
-	// 'vs/base/node/processes',
-	// 'vs/base/parts/ipc/node/ipc.cp',
+	'vs/base/node/processes',
+	'vs/base/parts/ipc/node/ipc.cp',
 	'vs/base/parts/quickopen/browser/quickOpenModel',
 	'vs/base/parts/tree/browser/treeDefaults',
 	'vs/base/parts/tree/browser/treeImpl',
@@ -306,11 +306,11 @@ const CONTENTS = [
 	'vs/editor/contrib/zoneWidget/zoneWidget',
 	'vs/editor/common/controller/cursor',
 	'vs/editor/contrib/referenceSearch/referencesModel',
-	// 'vs/platform/clipboard/electron-browser/clipboardService',
+	'vs/platform/clipboard/electron-browser/clipboardService',
 	'vs/platform/extensionManagement/common/extensionManagementIpc',
 	'vs/platform/extensions/common/extensionHost',
-	// 'vs/platform/extensions/node/extensionValidator',
-	// 'vs/platform/files/node/files',
+	'vs/platform/extensions/node/extensionValidator',
+	'vs/platform/files/node/files',
 	'vs/platform/instantiation/common/descriptors',
 	'vs/platform/instantiation/common/extensions',
 	'vs/platform/instantiation/common/instantiation',
@@ -336,7 +336,7 @@ const CONTENTS = [
 	'vs/platform/environment/common/environment',
 	'vs/platform/extensionManagement/common/extensionManagement',
 	'vs/platform/extensionManagement/common/extensionManagementUtil',
-	// 'vs/platform/extensionManagement/node/extensionManagementUtil',
+	'vs/platform/extensionManagement/node/extensionManagementUtil',
 	'vs/platform/extensions/common/extensions',
 	'vs/platform/actions/common/menuService',
 	'vs/platform/files/common/files',
@@ -355,18 +355,19 @@ const CONTENTS = [
 	'vs/platform/localizations/common/localizations',
 	'vs/platform/localizations/common/localizationsIpc',
 	'vs/platform/log/common/log',
-	// 'vs/platform/broadcast/electron-browser/broadcastService',
+	'vs/platform/broadcast/electron-browser/broadcastService',
 	'vs/platform/commands/common/commandService',
 	'vs/platform/log/common/logIpc',
-	// 'vs/platform/log/node/spdlogService',
+	'vs/platform/log/node/spdlogService',
 	'vs/platform/markers/common/markerService',
 	'vs/platform/markers/common/markers',
 	'vs/platform/message/common/message',
 	'vs/platform/actions/browser/menuItemActionItem',
 	'vs/platform/message/common/messageIpc',
-	// 'vs/platform/node/package',
-	// 'vs/platform/node/product',
-	// 'vs/platform/environment/node/environmentService',
+	'vs/platform/node/package',
+	'vs/base/node/paths',
+	'vs/platform/node/product',
+	'vs/platform/environment/node/environmentService',
 	'vs/platform/opener/common/opener',
 	'vs/editor/contrib/markdown/markdownRenderer',
 	'vs/platform/progress/common/progress',
@@ -382,14 +383,14 @@ const CONTENTS = [
 	'vs/platform/configuration/common/configuration',
 	'vs/editor/common/services/resourceConfigurationImpl',
 	'vs/platform/configuration/common/configurationModels',
-	// 'vs/platform/configuration/node/configuration',
+	'vs/platform/configuration/node/configuration',
 	'vs/platform/contextkey/browser/contextKeyService',
 	'vs/platform/extensions/common/extensionsRegistry',
-	// 'vs/platform/actions/electron-browser/menusExtensionPoint',
+	'vs/platform/actions/electron-browser/menusExtensionPoint',
 	'vs/platform/jsonschemas/common/jsonValidationExtensionPoint',
 	'vs/platform/keybinding/common/keybindingsRegistry',
 	'vs/platform/markers/common/problemMatcher',
-	// 'vs/platform/request/node/request',
+	'vs/platform/request/node/request',
 	'vs/platform/search/common/replace',
 	'vs/platform/search/common/search',
 	'vs/platform/statusbar/common/statusbar',
@@ -398,7 +399,7 @@ const CONTENTS = [
 	'vs/editor/browser/view/viewOverlays',
 	'vs/editor/browser/viewParts/viewCursors/viewCursor',
 	'vs/editor/contrib/suggest/suggestMemory',
-	// 'vs/platform/integrity/node/integrityServiceImpl',
+	'vs/platform/integrity/node/integrityServiceImpl',
 	'vs/platform/storage/common/storageService',
 	'vs/platform/storage/common/migration',
 	'vs/platform/telemetry/browser/errorTelemetry',
@@ -440,9 +441,9 @@ const CONTENTS = [
 	'vs/platform/telemetry/common/telemetryUtils',
 	'vs/platform/opener/browser/openerService',
 	'vs/platform/opener/browser/opener.contribution',
-	// 'vs/platform/telemetry/node/commonProperties',
-	// 'vs/platform/telemetry/node/telemetryNodeUtils',
-	// 'vs/platform/telemetry/node/workbenchCommonProperties',
+	'vs/platform/telemetry/node/commonProperties',
+	'vs/platform/telemetry/node/telemetryNodeUtils',
+	'vs/platform/telemetry/node/workbenchCommonProperties',
 	'vs/platform/theme/common/colorRegistry',
 	'vs/platform/theme/common/colorExtensionPoint',
 	'vs/platform/theme/common/styler',
@@ -501,13 +502,13 @@ const CONTENTS = [
 	'vs/editor/contrib/wordHighlighter/wordHighlighter',
 	'vs/platform/update/common/update',
 	'vs/platform/update/common/updateIpc',
-	// 'vs/platform/update/node/update.config.contribution',
+	'vs/platform/update/node/update.config.contribution',
 	'vs/platform/url/common/url',
 	'vs/platform/windows/common/windows',
-	// 'vs/platform/lifecycle/electron-browser/lifecycleService',
+	'vs/platform/lifecycle/electron-browser/lifecycleService',
 	'vs/platform/url/common/urlIpc',
 	'vs/platform/windows/common/windowsIpc',
-	// 'vs/platform/windows/electron-browser/windowService',
+	'vs/platform/windows/electron-browser/windowService',
 	'vs/platform/workbench/common/contextkeys',
 	'vs/platform/list/browser/listService',
 	'vs/platform/workspaces/common/workspaces',
@@ -520,9 +521,9 @@ const CONTENTS = [
 	'vs/editor/editor.all',
 	'vs/platform/extensionManagement/common/extensionEnablementService',
 	'vs/platform/workspaces/common/workspacesIpc',
-	// 'vs/platform/workspaces/node/workspaces',
-	// 'vs/workbench/api/electron-browser/extHostCustomers',
-	// 'vs/workbench/api/node/extHostTypes',
+	'vs/platform/workspaces/node/workspaces',
+	'vs/workbench/api/electron-browser/extHostCustomers',
+	'vs/workbench/api/node/extHostTypes',
 	'vs/workbench/browser/actions',
 	'vs/workbench/browser/parts/quickopen/quickopen',
 	'vs/workbench/browser/parts/statusbar/statusbar',
@@ -552,18 +553,18 @@ const CONTENTS = [
 	'vs/workbench/browser/parts/editor/sideBySideEditor',
 	'vs/workbench/browser/parts/editor/webviewEditor',
 	'vs/workbench/common/views',
-	// 'vs/workbench/electron-browser/resources',
-	// 'vs/workbench/parts/cache/node/nodeCachedDataManager',
-	// 'vs/workbench/parts/cache/node/cache.contribution',
-	// 'vs/workbench/parts/cli/electron-browser/cli.contribution',
-	// 'vs/workbench/parts/codeEditor/electron-browser/accessibility',
-	// 'vs/workbench/parts/codeEditor/electron-browser/menuPreventer',
-	// 'vs/workbench/parts/codeEditor/electron-browser/selectionClipboard',
-	// 'vs/workbench/parts/codeEditor/electron-browser/toggleMinimap',
-	// 'vs/workbench/parts/codeEditor/electron-browser/toggleMultiCursorModifier',
-	// 'vs/workbench/parts/codeEditor/electron-browser/toggleRenderControlCharacter',
-	// 'vs/workbench/parts/codeEditor/electron-browser/toggleRenderWhitespace',
-	// 'vs/workbench/parts/codeEditor/electron-browser/toggleWordWrap',
+	'vs/workbench/electron-browser/resources',
+	'vs/workbench/parts/cache/node/nodeCachedDataManager',
+	'vs/workbench/parts/cache/node/cache.contribution',
+	'vs/workbench/parts/cli/electron-browser/cli.contribution',
+	'vs/workbench/parts/codeEditor/electron-browser/accessibility',
+	'vs/workbench/parts/codeEditor/electron-browser/menuPreventer',
+	'vs/workbench/parts/codeEditor/electron-browser/selectionClipboard',
+	'vs/workbench/parts/codeEditor/electron-browser/toggleMinimap',
+	'vs/workbench/parts/codeEditor/electron-browser/toggleMultiCursorModifier',
+	'vs/workbench/parts/codeEditor/electron-browser/toggleRenderControlCharacter',
+	'vs/workbench/parts/codeEditor/electron-browser/toggleRenderWhitespace',
+	'vs/workbench/parts/codeEditor/electron-browser/toggleWordWrap',
 	'vs/workbench/parts/debug/common/debug',
 	'vs/workbench/parts/debug/browser/breakpointWidget',
 	'vs/workbench/parts/debug/browser/debugActionItems',
@@ -574,26 +575,26 @@ const CONTENTS = [
 	'vs/workbench/parts/debug/common/debugModel',
 	'vs/workbench/parts/debug/common/debugViewModel',
 	'vs/workbench/parts/debug/common/replHistory',
-	// 'vs/workbench/parts/debug/electron-browser/baseDebugView',
-	// 'vs/workbench/parts/debug/electron-browser/electronDebugActions',
-	// 'vs/workbench/parts/debug/electron-browser/terminalSupport',
-	// 'vs/workbench/parts/debug/node/debugAdapter',
-	// 'vs/workbench/parts/debug/node/v8Protocol',
+	'vs/workbench/parts/debug/electron-browser/baseDebugView',
+	'vs/workbench/parts/debug/electron-browser/electronDebugActions',
+	'vs/workbench/parts/debug/electron-browser/terminalSupport',
+	'vs/workbench/parts/debug/node/debugAdapter',
+	'vs/workbench/parts/debug/node/v8Protocol',
 	'vs/workbench/parts/emmet/browser/actions/showEmmetCommands',
 	'vs/workbench/parts/emmet/browser/emmet.browser.contribution',
 	'vs/workbench/parts/execution/common/execution',
-	// 'vs/workbench/parts/execution/electron-browser/terminal',
-	// 'vs/workbench/parts/execution/electron-browser/terminalService',
+	'vs/workbench/parts/execution/electron-browser/terminal',
+	'vs/workbench/parts/execution/electron-browser/terminalService',
 	'vs/workbench/parts/extensions/common/extensionQuery',
 	'vs/workbench/parts/extensions/common/extensions',
 	'vs/workbench/parts/extensions/browser/dependenciesViewer',
 	'vs/workbench/parts/extensions/browser/extensionsWidgets',
 	'vs/workbench/parts/extensions/common/extensionsFileTemplate',
 	'vs/workbench/parts/extensions/common/extensionsInput',
-	// 'vs/workbench/parts/extensions/electron-browser/extensionsUtils',
+	'vs/workbench/parts/extensions/electron-browser/extensionsUtils',
 	'vs/workbench/parts/files/common/explorerModel',
 	'vs/workbench/parts/files/browser/files',
-	// 'vs/workbench/parts/files/electron-browser/views/explorerDecorationsProvider',
+	'vs/workbench/parts/files/electron-browser/views/explorerDecorationsProvider',
 	'vs/workbench/parts/html/browser/webviewFindWidget',
 	'vs/workbench/parts/html/browser/webview',
 	'vs/workbench/parts/logs/common/logConstants',
@@ -990,6 +991,7 @@ const CONTENTS = [
 	// 'vs/workbench/workbench.main'
 ];
 
+let loader = [];
 let results = [];
 
 function getFileContents(file) {
@@ -1000,7 +1002,7 @@ function getFileContents(file) {
 
 PREFIX.forEach((file) => {
 	const fileContents = getFileContents(file);
-	results.push(fileContents);
+	loader.push(fileContents);
 });
 
 var CSS = [];
@@ -1025,22 +1027,86 @@ CONTENTS.forEach((file) => {
 	results.push(fileContents);
 });
 
-const file = results.join('\n;\n');
+// TODO@snapshot
+const productNameLong = product.nameLong;
+if (!false || process.env['VSCODE_DEV']) {
+	product.nameShort += ' Dev';
+	product.nameLong += ' Dev';
+	product.dataFolderName += '-dev';
+}
 
 const startupFileContents = `
 var Monaco_Loader_Init;
 var Monaco_LOG = [];
 var Monaco_CSS = ${JSON.stringify(CSS)};
+var Monaco_Node_Modules = null;
 (function() {
 	var doNotInitLoader = true;
 	var MonacoSnapshotPlatform = '${process.platform}';
+	var MonacoSnapshotArch = '${process.arch}';
 	var MonacoSnapshotGlobal = this;
+	var MonacoSnapshotPackage = ${JSON.stringify(package)};
+	var MonacoSnapshotProduct = ${JSON.stringify(product)};
+	var MonacoSnapshotInitializeCallbacks = [];
 	var navigator = {
 		userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_3) AppleWebKit/537.36 (KHTML, like Gecko) code-oss-dev/1.21.0 Chrome/58.0.3029.110 Electron/1.7.9 Safari/537.36'
 	};
-	${file.toString()};
+	${loader.join('\n;\n').toString()};
+	(function() {
+		var NODE_MODULES = [
+			'assert',
+			'child_process',
+			'crypto',
+			'electron',
+			'fs',
+			'iconv-lite',
+			'net',
+			'os',
+			'path',
+			'semver',
+			'spdlog',
+			'string_decoder',
+			'url',
+		];
+		Monaco_Node_Modules = Object.create(null);
+		var bindModule = function(moduleName) {
+			define(moduleName, function() {
+				Monaco_Node_Modules[moduleName] = {};
+				return Monaco_Node_Modules[moduleName];
+
+				var loaded = false;
+				var actual = null;
+				var handler = {
+					get: (target, name) => {
+						console.log(typeof require.__$__nodeRequire);
+						if (!loaded) {
+							loaded = true;
+							actual = require.__$__nodeRequire(moduleName);
+						}
+						return actual[name];
+					}
+				};
+				return new Proxy(Object.create(null), handler);
+
+			});
+		};
+		NODE_MODULES.forEach(bindModule);
+	})();
+	${results.join('\n;\n').toString()};
 	Monaco_Loader_Init = function() {
 		AMDLoader.init();
+		Object.keys(Monaco_Node_Modules).forEach(function(moduleName) {
+			var actual = require.__$__nodeRequire(moduleName);
+			var target = Monaco_Node_Modules[moduleName];
+
+			//console.log('required ' + moduleName);
+			Object.keys(actual).forEach(function(key) {
+				target[key] = actual[key];
+			});
+		});
+		MonacoSnapshotInitializeCallbacks.forEach(function(callback) {
+			callback();
+		});
 		return { define, require };
 	};
 })();
@@ -1049,7 +1115,7 @@ var Monaco_CSS = ${JSON.stringify(CSS)};
 const startupFile = path.join(__dirname, 'start.js');
 fs.writeFileSync(startupFile, startupFileContents);
 
-const startupBlobFilepath = path.join(__dirname, `../.build/electron/${product.nameLong}.app/Contents/Frameworks/Electron Framework.framework/Resources/snapshot_blob.bin`);
+const startupBlobFilepath = path.join(__dirname, `../.build/electron/${productNameLong}.app/Contents/Frameworks/Electron Framework.framework/Resources/snapshot_blob.bin`);
 // startupBlobFilepath = `VSCode-${process.platform}-${arch}/snapshot_blob.bin`;
 
 // Restore original
