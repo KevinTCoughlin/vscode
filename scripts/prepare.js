@@ -1031,11 +1031,19 @@ CONTENTS.forEach((file) => {
 
 // TODO@snapshot
 const productNameLong = product.nameLong;
-if (!false || process.env['VSCODE_DEV']) {
-	product.nameShort += ' Dev';
-	product.nameLong += ' Dev';
-	product.dataFolderName += '-dev';
-}
+// if (!false || process.env['VSCODE_DEV']) {
+// 	product.nameShort += ' Dev';
+// 	product.nameLong += ' Dev';
+// 	product.dataFolderName += '-dev';
+// }
+
+
+product.commit = "05ea088890f0b0a70fa883047b67bf64c005b5b1";
+product.date = "2018-02-13T16:38:50.446Z";
+product.settingsSearchBuildId = 121000243;
+
+// TODO@snapshot
+package.name = 'Code - OSS';
 
 const startupFileContents = `
 var Monaco_Loader_Init;
@@ -1078,19 +1086,43 @@ var Monaco_Node_Modules = null;
 		Monaco_Node_Modules = Object.create(null);
 		var bindModule = function(moduleName) {
 			define(moduleName, function() {
-				Monaco_Node_Modules[moduleName] = {};
-				return Monaco_Node_Modules[moduleName];
+				// Monaco_Node_Modules[moduleName] = {};
+				// return Monaco_Node_Modules[moduleName];
 
 				var loaded = false;
 				var actual = null;
+				var cache = Object.create(null);
+				var cached = Object.create(null);
 				var handler = {
 					get: (target, name) => {
-						console.log(typeof require.__$__nodeRequire);
+						// console.log('get for ' + moduleName + '.' + name);
+						// console.log(typeof require.__$__nodeRequire);
 						if (!loaded) {
 							loaded = true;
-							actual = require.__$__nodeRequire(moduleName);
+							if (moduleName === 'fs') {
+								actual = require.__$__nodeRequire('original-fs');
+							} else {
+								actual = require.__$__nodeRequire(moduleName);
+							}
 						}
-						return actual[name];
+
+						if (!cached[name]) {
+							let result = actual[name];
+							// console.log('===> ' + typeof actual[name]);
+							if (typeof result === 'function') {
+								result = result.bind(actual);
+							}
+							cache[name] = result;
+							cached[name] = true;
+						}
+
+
+						return cache[name];
+					},
+					set: (target, name, value) => {
+						// console.log('set for ' + moduleName + '.' + name);
+						cache[name] = value;
+						cached[name] = true;
 					}
 				};
 				return new Proxy(Object.create(null), handler);
@@ -1108,11 +1140,38 @@ var Monaco_Node_Modules = null;
 
 			//console.log('required ' + moduleName);
 			Object.keys(actual).forEach(function(key) {
+				if (moduleName === 'crypto') {
+					if (key === 'createCredentials' || key === 'Credentials') {
+						return;
+					}
+				}
 				target[key] = actual[key];
 			});
 		});
 		MonacoSnapshotInitializeCallbacks.forEach(function(callback) {
 			callback();
+		});
+		[
+			'assert',
+			'child_process',
+			'crypto',
+			'electron',
+			'fs',
+			'graceful-fs',
+			'iconv-lite',
+			'native-keymap',
+			'net',
+			'os',
+			'path',
+			'semver',
+			'spdlog',
+			'stream',
+			'string_decoder',
+			'url',
+			'util',
+			'zlib',
+		].forEach(function(moduleName) {
+			require.__$__nodeRequire(moduleName);
 		});
 		return { define, require };
 	};
@@ -1127,13 +1186,21 @@ const startupBlobFilepath = path.join(__dirname, `../.build/electron/${productNa
 
 // Restore original
 try { fs.unlinkSync(startupBlobFilepath); } catch (err) { /**/ }
-fs.copyFileSync(startupBlobFilepath + '.original', startupBlobFilepath);
+// fs.copyFileSync(startupBlobFilepath + '.original', startupBlobFilepath);
 // process.exit(0);
 
 // Check that the file works!
 vm.runInNewContext(startupFileContents, undefined, { filename: startupFile, displayErrors: true });
 
 const mksnapshot = path.join(__dirname, `../node_modules/.bin/${process.platform === 'win32' ? 'mksnapshot.cmd' : 'mksnapshot'}`);
-cp.execFileSync(mksnapshot, [startupFile, `--startup_blob`, startupBlobFilepath]);
+cp.execFileSync(mksnapshot, [`--no-use_ic`, `--no-lazy`, startupFile, `--startup_blob`, startupBlobFilepath]);
+
+// --ignition --turbo
 
 console.log(`FILE SIZE: ${fs.statSync(startupBlobFilepath).size}`);
+
+
+// Extra copy
+const startupBlobFilepath2 = path.join(__dirname, `../../VSCode-darwin/Code - OSS.app/Contents/Frameworks/Electron Framework.framework/Resources/snapshot_blob.bin`);
+try { fs.unlinkSync(startupBlobFilepath2); } catch (err) { /**/ }
+fs.copyFileSync(startupBlobFilepath, startupBlobFilepath2);

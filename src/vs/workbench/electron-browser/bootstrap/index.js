@@ -7,7 +7,7 @@
 
 'use strict';
 
-/*global window,document,define,Monaco_Loader_Init,Monaco_CSS,Monaco_Node_Modules*/
+/*global window,document,define,Monaco_Loader_Init,Monaco_CSS*/
 
 const perf = require('../../../base/common/performance');
 perf.mark('renderer/started');
@@ -207,11 +207,6 @@ function main() {
 	if (typeof Monaco_Loader_Init === 'function') {
 		// There has been a snapshot
 		define = Monaco_Loader_Init().define;
-
-		const originalFS = require.__$__nodeRequire('original-fs');
-		Object.keys(originalFS).forEach((key) => {
-			Monaco_Node_Modules['fs'][key] = originalFS[key];
-		});
 	} else {
 		const loaderFilename = configuration.appRoot + '/out/vs/loader.js';
 		const loaderSource = require('fs').readFileSync(loaderFilename);
@@ -255,7 +250,7 @@ function main() {
 		'vs/nls!vs/workbench/workbench.main',
 		'vs/css!vs/workbench/workbench.main'
 	];
-	if (typeof Monaco_CSS !== 'undefined') {
+	if (typeof Monaco_CSS !== 'undefined' && process.env['VSCODE_DEV']) {
 		loadModules = loadModules.concat(Monaco_CSS);
 	}
 	require(loadModules, function () {
